@@ -1,0 +1,94 @@
+@startuml
+<style>
+timingDiagram {
+  .red {
+    LineColor red
+  }
+  .yellow {
+    LineColor darkorange
+  }
+  .darkred {
+    LineColor darkred
+  }
+  .blue {
+    LineColor blue
+  }
+}
+</style>
+
+hide time-axis
+scale 100 as 50 pixels
+
+binary "24V" as V24 <<yellow>>
+binary "5V"  as V5 <<red>>
+binary "Pi Power" as PiPower <<darkred>>
+binary "24V missing" as Missing24 <<blue>>
+binary "/PiRunning" as NotRunning
+
+@0
+V24 is low
+V5 is low
+NotRunning is {high,low}
+
+@100
+V24 is high
+V5 is high
+PiPower is high
+NotRunning is high
+
+@200
+NotRunning is low 
+
+@300
+NotRunning is low : Pulled down by OrangePi
+
+@500
+V24 is low
+V5 is high
+Missing24 is high
+
+@700
+NotRunning is high
+
+@900
+PiPower is low
+
+@950
+NotRunning is high : Driven by PIC weak pull up
+
+@1500
+V24 is high
+PiPower is high
+Missing24 is low
+
+@1600
+NotRunning is low
+
+@2100
+V24 is low
+Missing24 is high
+
+@2400
+NotRunning is high
+
+@2600
+PiPower is low
+
+@3500
+V5 is low
+Missing24 is low
+NotRunning is {high,low}
+
+@3600
+V5 is low
+Missing24 is low
+NotRunning is {high,low}
+
+@NotRunning
+@100 <-> @200 : Boot
+@500 <-> @700 : Shutdown
+@700 <-> @900 : PowerOff delay
+@1500 <-> @1600 : Boot
+@2100 <-> @2400 : Shutdown
+@2400 <-> @2600 : PowerOff delay
+@enduml
